@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note-App</title>
+    <script src="https://kit.fontawesome.com/bf520e6492.js" crossorigin="anonymous"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #addbtn{
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            background-color: #2d3436;
+            color: white;
+            padding: 10px;
+            border: 0;
+            outline: 0;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        #main{
+            width: 100%;
+            min-height: 100vh;
+            background-color: rgb(124, 227, 205);
+            display: flex;
+            flex-wrap: wrap;
+            padding-bottom: 50px;
+        }
+        .note{
+            width: 400px;
+            height: 400px;
+            background: white;
+            margin: 15px;
+            margin-top: 55px;
+            position: relative;
+        }
+        .tool{
+            width: 100%;
+            background-color: #241436;
+            color: white;
+            padding: 5px; 
+            display: flex;
+            justify-content: end;
+        }
+        .tool i{
+            padding: 3px;
+            cursor: pointer;
+        }
+        .note textarea{
+            border: none;
+            width: 100%;
+            height: 100%;
+            resize: none;
+            padding: 10px;
+            font-size: 20px;
+        }
+        .note textarea:focus{
+            border: 0px;
+            outline: 0px;
+        }
+
+        small{
+        display: flex;
+        top: 10px;
+        position: fixed;
+        font-size:8px; 
+        padding: 10px;   
+        }
+        small a{ 
+            font-size: small;
+        }
+    </style>
+</head>
+<body>
+    <small>MADE WITH 💖 BY <a href="#">Shubham</a></small>
+    <button id="addbtn">
+        <i class="fas fa-plus"></i>
+        Add Note
+    </button>
+    <div id="main"> 
+        <!-- <div class="note">
+            <div class="tool">
+                <i class="fas fa-save"></i>
+                <i class="fas fa-trash"></i>
+            </div>
+            <textarea name="" id="textarea" cols="30" rows="10"></textarea>
+        </div> -->
+    </div>
+    
+    <script>
+        const addbtn = document.querySelector("#addbtn"); 
+        const main = document.querySelector("#main"); 
+        addbtn.addEventListener(
+            "click",
+            function(){   
+                addNote();  
+            }
+        );
+
+        const saveNotes = () => {
+            const notes = document.querySelectorAll(".note textarea");
+            const data = [];
+            notes.forEach(
+                (note) => {
+                    data.push(note.value);
+                }
+            );
+
+            if(data.length === 0){
+                localStorage.removeItem("notes");
+            }
+            else{
+                localStorage.setItem("notes", JSON.stringify(data));
+            } 
+        }
+
+        const addNote = (text = "") => {
+            const note = document.createElement("div");
+            note.classList.add("note");
+            note.innerHTML = `
+                <div class="tool">
+                    <i class="fas fa-save save"></i>
+                    <i class="fas fa-trash trash"></i>
+                </div>
+                <textarea>${text}</textarea>
+            `;
+
+            //for removing the note.
+            note.querySelector(".trash").addEventListener(
+                "click",
+                function(){
+                    note.remove();
+                    saveNotes();
+                }
+            );
+
+            //for saving the note
+            note.querySelector(".save").addEventListener(
+                "click",
+                function(){
+                    saveNotes();
+                }
+            );
+            note.querySelector("textarea").addEventListener(
+                "focusout",
+                function(){
+                    saveNotes();
+                }
+            )
+            main.appendChild(note);
+            saveNotes();
+        }
+        
+        (
+            function () {
+                const lsNotes = JSON.parse(localStorage.getItem("notes"));
+                if(lsNotes === null){
+                    addNote();
+                }
+                else{
+                    lsNotes.forEach(
+                        (lsNotes) => {
+                            addNote(lsNotes);
+                        }
+                    );
+                }
+            }
+        )()
+ 
+    </script>
+</body>
+</html>
